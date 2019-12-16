@@ -11,15 +11,13 @@ namespace Restaurant
         {
             Cafe cafe = new Cafe(2, 2);
 
-            int personCounter = 0;
-
             Console.WriteLine("Нажмите на Enter для начала игры и продолжайте нажимать, \nесли вы захотите увидеть нового посетителя в своем кафе. \n Для выхода из игры нажмите Escape\n");
 
             ConsoleKey key = Console.ReadKey(true).Key;
 
             while (true)
             {
-                Person person = new Person("Wiktor" + personCounter++, random.Next(15, 61), (PersonBehaviour)random.Next(0, 3));
+                Person person = new Person(GenerateName(5), random.Next(15, 61), (PersonBehaviour)random.Next(0, 3));
                 cafe.NewVisitor(person);
                 Console.WriteLine(CountNullElements(cafe.Employees));
 
@@ -42,7 +40,23 @@ namespace Restaurant
 
             return count;
         }
+
+        static string GenerateName(int length)
+        {
+            Random rnd = new Random();
+            string name = "";
+            string vowels = "аеёиоуыэюя";
+            string consonants = "бвгджзйклмнпрстфхцчшщ";
+            name += consonants[rnd.Next(21)];
+            name = name.ToUpper();
+            for (int i = 0; i < length; i++)
+            {
+                name += (i % 2 == 0) ? vowels[rnd.Next(10)] : consonants[rnd.Next(21)];
+            }
+            return name;
+        }
     }
+
     class Person
     {
         public string Name;
