@@ -36,32 +36,35 @@ void split(string raw, string * out)
     }
 }
 
-void setOperators(string * input, int len)
-{
-    for(int i = 0; i < len; i++)
-    {
-        if (input[i] == "+")
-            input[i] = "SUM";
-        if (input[i] == "-")
-            input[i] = "SUB";
-    }
-}
-
 void calculate(string * input, int len)
 {
     int result = 0;
     int op_type = 0;
-    print << "len: " << len << endl;
+    int temp_op_type = op_type;
     for (int i = 0; i < len; i++)
     {
-        if (input[i] == "SUM")
+        if (input[i] == "+")
         {
+            temp_op_type = op_type;
             op_type = 0;
             continue;
         }
-        else if (input[i] == "SUB")
+        else if (input[i] == "-")
         {
+            temp_op_type = op_type;
             op_type = 1;
+            continue;
+        }
+        else if (input[i] == "*")
+        {
+            temp_op_type = op_type;
+            op_type = 2;
+            continue;
+        }
+        else if (input[i] == "/")
+        {
+            temp_op_type = op_type;
+            op_type = 3;
             continue;
         }
         else
@@ -69,15 +72,50 @@ void calculate(string * input, int len)
         {
             case 0: //+
             {
-                print << "SUM: " << std::stoi(input[i]) << endl;
+                //print << "SUM: " << std::stoi(input[i]) << endl;
                 result += std::stoi(input[i]);
                 break;
             }
             case 1: //-
             {
-                print << "SUB: " << std::stoi(input[i]) << endl;
+                //print << "SUB: " << std::stoi(input[i]) << endl;
                 result -= std::stoi(input[i]);
                 break;
+            }
+            case 2:
+            {
+                if (temp_op_type == 0)
+                {
+                    result -= std::stoi(input[i - 2]);
+                    result += (std::stoi(input[i - 2]) * std::stoi(input[i]));
+                    //i+=2;
+                    continue;
+                }
+                else if (temp_op_type == 1)
+                {
+                    result += std::stoi(input[i - 2]);
+                    result -= (std::stoi(input[i - 2]) * std::stoi(input[i]));
+                    //i+=2;
+                    continue;
+                }
+                
+            }
+            case 3:
+            {
+                if (temp_op_type == 0)
+                {
+                    result -= std::stoi(input[i - 2]);
+                    result += (std::stoi(input[i - 2]) / std::stoi(input[i]));
+                    //i+=2;
+                    continue;
+                }
+                else if (temp_op_type == 1)
+                {
+                    result += std::stoi(input[i - 2]);
+                    result -= (std::stoi(input[i - 2]) / std::stoi(input[i]));
+                    //i+=2;
+                    continue;
+                }
             }
             default:
                 break;
@@ -94,13 +132,10 @@ int main(int argc, const char * argv[])
     std::cin >> len;
     len = len * 2 - 1;
     string n[len];
-    print << endl << "Expression: " <<endl;
+    print << endl << "Expression: ";
     std::cin.ignore();
     std::getline(std::cin, t);
     split(t, n);
-    printArray(n, len);
-    setOperators(n, len);
-    printArray(n, len);
     calculate(n, len);
     return EXIT_SUCCESS;
 }
