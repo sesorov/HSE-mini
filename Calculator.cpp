@@ -2,140 +2,113 @@
 #define print std::cout
 using std::endl;
 using std::string;
+const char SUM = 0;
+const char SUB = 1;
+const char MUL = 2;
+const char DIV = 3;
 
-int length(string * array)
+void setOperation(char in, char &temp_OpType)
 {
-    return *(&array + 1) - array;
-}
-
-void printArray(string * array, int len)
-{
-    for (int i = 0; i < len; i++)
+    switch (in)
     {
-        print << array[i] << " ";
+        case '+':
+        {
+            temp_OpType = SUM;
+            break;
+        }
+        case '-':
+        {
+            temp_OpType = SUB;
+            break;
+        }
+        case 'm':
+        {
+            temp_OpType = MUL;
+            break;
+        }
+        case '/':
+        {
+            temp_OpType = DIV;
+            break;
+        }
+        default:
+            break;
     }
-    print << endl;
-}
-
-void split(string raw, string * out)
-{
-    string word = "";
-    int counter = 0;
-    for (int i = 0; i < raw.length(); i++)
-    {
-        if (raw[i] != ' ')
-        {
-            word += raw[i];
-        }
-        else
-        {
-            out[counter++] = word;
-            word = "";
-        }
-        if (i == raw.length()-1) out[counter++] = word;
-    }
-}
-
-void calculate(string * input, int len)
-{
-    int result = 0;
-    int op_type = 0;
-    int temp_op_type = op_type;
-    for (int i = 0; i < len; i++)
-    {
-        if (input[i] == "+")
-        {
-            temp_op_type = op_type;
-            op_type = 0;
-            continue;
-        }
-        else if (input[i] == "-")
-        {
-            temp_op_type = op_type;
-            op_type = 1;
-            continue;
-        }
-        else if (input[i] == "*")
-        {
-            temp_op_type = op_type;
-            op_type = 2;
-            continue;
-        }
-        else if (input[i] == "/")
-        {
-            temp_op_type = op_type;
-            op_type = 3;
-            continue;
-        }
-        else
-        switch(op_type)
-        {
-            case 0: //+
-            {
-                //print << "SUM: " << std::stoi(input[i]) << endl;
-                result += std::stoi(input[i]);
-                break;
-            }
-            case 1: //-
-            {
-                //print << "SUB: " << std::stoi(input[i]) << endl;
-                result -= std::stoi(input[i]);
-                break;
-            }
-            case 2:
-            {
-                if (temp_op_type == 0)
-                {
-                    result -= std::stoi(input[i - 2]);
-                    result += (std::stoi(input[i - 2]) * std::stoi(input[i]));
-                    //i+=2;
-                    continue;
-                }
-                else if (temp_op_type == 1)
-                {
-                    result += std::stoi(input[i - 2]);
-                    result -= (std::stoi(input[i - 2]) * std::stoi(input[i]));
-                    //i+=2;
-                    continue;
-                }
-                
-            }
-            case 3:
-            {
-                if (temp_op_type == 0)
-                {
-                    result -= std::stoi(input[i - 2]);
-                    result += (std::stoi(input[i - 2]) / std::stoi(input[i]));
-                    //i+=2;
-                    continue;
-                }
-                else if (temp_op_type == 1)
-                {
-                    result += std::stoi(input[i - 2]);
-                    result -= (std::stoi(input[i - 2]) / std::stoi(input[i]));
-                    //i+=2;
-                    continue;
-                }
-            }
-            default:
-                break;
-        }
-    }
-    print << "RES: " << result << endl;
 }
 
 int main(int argc, const char * argv[])
 {
-    string t = "";
-    print << "Num of elements: ";
-    int len = 0;
-    std::cin >> len;
-    len = len * 2 - 1;
-    string n[len];
-    print << endl << "Expression: ";
-    std::cin.ignore();
-    std::getline(std::cin, t);
-    split(t, n);
-    calculate(n, len);
+    using namespace std;
+    cout << argc << endl;
+    char operation = SUM, temp_operation = operation;
+    int res(0);
+    for (int i = 1; i < argc; ++i)
+    {
+        if (operation == SUM) // +
+        {
+            if (i % 2 != 0)
+            {
+                res += atoi(argv[i]);
+            }
+            else
+            {
+                temp_operation = operation;
+                setOperation(*argv[i], operation);
+            }
+        }
+        else if (operation == SUB) // -
+        {
+            if (i % 2 != 0)
+            {
+                res -= atoi(argv[i]);
+            }
+            else
+            {
+                temp_operation = operation;
+                setOperation(*argv[i], operation);
+            }
+        }
+        else if (operation == MUL || operation == DIV)
+        {
+            if (i % 2 != 0)
+            {
+                switch (temp_operation)
+                {
+                    case SUM:
+                    {
+                        res -= atoi(argv[i - 2]);
+                        res += (operation == MUL) ? (atoi(argv[i - 2]) * atoi(argv[i])) : (atoi(argv[i - 2]) / atoi(argv[i]));
+                        break;
+                    }
+                    case SUB:
+                    {
+                        res += atoi(argv[i - 2]);
+                        res -= (operation == MUL) ? atoi(argv[i - 2]) * atoi(argv[i]) : atoi(argv[i - 2]) / atoi(argv[i]);
+                        break;
+                    }
+                    case MUL:
+                    {
+                        if (operation == MUL) res *= atoi(argv[i]);
+                        else res /= atoi(argv[i]);
+                        break;
+                    }
+                    case DIV:
+                    {
+                        if (operation == DIV) res /= atoi(argv[i]);
+                        else res *= atoi(argv[i]);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                temp_operation = operation;
+                setOperation(*argv[i], operation);
+            }
+        }
+    }
+    cout << "Res = " << res << endl;
     return EXIT_SUCCESS;
 }
