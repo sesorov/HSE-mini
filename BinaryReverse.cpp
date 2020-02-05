@@ -27,21 +27,14 @@ int OctalToDecimal(int n)
 {
     int num = n;
     int dec_value = 0;
-    
-    // Initializing base value to 1, i.e 8^0
     int base = 1;
     
     int temp = num;
-    while (temp) {
-        
-        // Extracting last digit
+    while (temp) 
+    {
         int last_digit = temp % 10;
         temp = temp / 10;
-        
-        // Multiplying last digit with appropriate
-        // base value and adding it to dec_value
         dec_value += last_digit * base;
-        
         base = base * 8;
     }
     
@@ -75,7 +68,5 @@ int main()
 {
     using namespace std;
     std::cout << reversCode(-17) << endl;
-    //cout << reversCode(-17) << endl;
-    //cout << std::oct << reversCode(-17) << endl;
     return EXIT_SUCCESS;
 }
