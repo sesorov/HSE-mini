@@ -1,5 +1,4 @@
 #include <iostream>
-#include <math.h>
 const int TO_8 = 0377;
 const int REVERSE_EVEN = 0125;
 const int REVERSE_ODD = 0252;
