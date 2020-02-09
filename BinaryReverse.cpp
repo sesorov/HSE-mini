@@ -19,10 +19,10 @@ int main()
     int input = 0;
     cout << "Enter the number (-128 to 127): ";
     cin >> input;
-    if (input > 128 || input < -127)
+    while (input > 128 || input < -127)
     {
-        cout << "Please, check the input. It should be from -128 to 127." << endl;
-        return EXIT_FAILURE;
+        cout << "Please, check the input. It should be from -128 to 127. Type again: ";
+        cin >> input;
     }
     cout << "Reverse even (type 0) or odd (type 1) positions: ";
     cin >> type;
