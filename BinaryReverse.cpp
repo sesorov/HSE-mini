@@ -6,10 +6,10 @@ const int TO_32 = 037777777400;
 
 int reverse(int number, bool type)
 {
-    bool isPositive = number > 0 ? true : false;
+    bool isPositive = number > 0;
     number &= TO_8;
     number ^= (type ? REVERSE_ODD : REVERSE_EVEN);
-    return number ^ (type ? (isPositive ? TO_32 : 0):(isPositive ? 0 : TO_32));
+    return number ^ (type ? (isPositive ? TO_32 : 0) : (isPositive ? 0 : TO_32));
 }
 
 int main()
