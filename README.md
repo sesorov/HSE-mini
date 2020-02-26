@@ -1,4 +1,4 @@
 # HSE-mini
 Small HSE projects.
-Language: Java, C#, C++.
+Languages: Java, C#, C++, Python.
 Business Informatics course.
