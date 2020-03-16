@@ -31,58 +31,90 @@ string Dump(T n) //binary
 		dump += (n & mask ? '1' : '0');    // 6 - 0 or 14 - 0 or 30 - 0
 		mask >>= 1;
 	}
-	return dump;
+	return dump + '\n';
 }
 
-/*void binaryDump(short int n, int* p)
+void write(string content, string path)
 {
-	short int mask(040000);
-	p[15] = (n < 0 ? 1 : 0);
-	for (int i = 0; i < 15; ++i, mask >>= 1)
-		p[15 - i - 1] = n & mask ? 1 : 0; // 14 - 0
-}
-
-template <typename T>
-string fpDump(T* pFloat) 
-{
-	int *p = new int[8 * sizeof(T)];
-	short int* pShort = reinterpret_cast<short int*>(pFloat);
-	int size(sizeof(T) / sizeof(short int));
-	int index = 0;
-	for (int i = 0; i < size; ++i)
-	{
-		index = size - i - 1;
-		binaryDump(pShort[index], p + 16 * index);
-	}
-	string dump = "";
-	for (int i = 0; i < 8 * sizeof(T); ++i) {
-		dump += to_string(p[8 * sizeof(T) - i - 1]);
-	}
-	return dump;
-}
-
-template <typename T>
-void print(int* p)
-{
-	int size(8 * sizeof(T));
-	for (int i = 0; i < size; ++i) // 31 - 0 or 63 - 0
-		cout << p[size - i - 1];
-	cout << endl;
-}*/
-
-int main()
-{
-	//char* p = getenv("USERPROFILE");
 	ofstream out;
-	out.open("text.txt");
-	ifstream inFile("text.txt");
+	out.open(path);
+	ifstream inFile(path);
 	if (!inFile)
 	{
 		cout << "Invalid opening file!\n";
-		return EXIT_FAILURE;
+		cout << "Directory: " + path;
 	}
 	else
-		out << "test" << endl;
+		out << content;
 	out.close();
+	cout << "Your data has been successfully written to " + path;
+}
+
+string read() 
+{
+	return "";
+}
+
+template<class T>
+T get(std::istream& is) 
+{
+	T result;
+	is >> result;
+	return result;
+}
+
+int main()
+{
+	int input = 0, n = 0, sn = 0, cn = 0;
+	string dump = "", path = "text.txt";
+	do
+	{
+		cout << "0 for int\n1 for short int\n2 for char\nType: ";
+		cin >> input;
+		if (cin.good() && (input == 0 || input == 1 || input == 2)) break;
+		else
+		{
+			cout << "Invalid data!\n";
+			cin.clear();
+			while (cin.get() != '\n');
+		}
+	} while (true);
+	do
+	{
+		cout << "Number: ";
+		switch (input)
+		{
+		case 0: //int
+			cin >> n;
+			dump = Dump<int>(n);
+			break;
+		case 1: //short int
+			cin >> sn;
+			dump = Dump<short int>(sn);
+			break;
+		case 2: //char
+			cin >> cn;
+			dump = Dump<char>(cn);
+			break;
+		default:
+			cout << "Wrong input." << endl;
+			break;
+		}
+		if (cin.good()) break;
+		else
+		{
+			cout << "Invalid data!\n";
+			cin.clear();
+			while (cin.get() != '\n');
+		}
+	} while (true);
+	cout << "Would you like to change file path? (Y/N): ";
+	if (get<string>(cin) == "Y")
+	{
+		cout << "New path (ending with filename.txt): ";
+		cin >> path;
+	}
+	else if (get<string>(cin) != "N") cout << "Wrong answer. PATH set to standard.";
+	write(dump, path);
 	return EXIT_SUCCESS;
 }
