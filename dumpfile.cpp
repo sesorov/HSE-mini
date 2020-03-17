@@ -1,4 +1,3 @@
-#include "pch.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -6,11 +5,17 @@
 using namespace std;
 
 template <typename T>
-string Dump(T n) //binary
+void Dump(T n, string path) //binary
 {
 	T mask;
-	string dump = "";
-	int size(8 * sizeof(T) - 1);
+	ofstream file;
+	file.open(path, ios::out);
+	if (!file)
+	{
+		cout << "Invalid opening file!" << '\n';
+		return;
+	}
+	int size(8 * sizeof(T));
 	switch (sizeof(T))
 	{
 		case 1:                        // char
@@ -25,38 +30,34 @@ string Dump(T n) //binary
 			mask = 010000000000;
 			break;
 	}
-	dump += (n < 0 ? '1' : '0');        // 7 or 15 or 31
-	for (int i = 0; i < size; ++i)
+	file << (n < 0 ? '1' : '0');        // 7 or 15 or 31
+	for (int i = 1; i < size; ++i)
 	{
-		dump += (n & mask ? '1' : '0');    // 6 - 0 or 14 - 0 or 30 - 0
+		file << (n & mask ? '1' : '0');    // 6 - 0 or 14 - 0 or 30 - 0
 		mask >>= 1;
 	}
-	return dump + '\n';
+	file << '\n';
+	file.close();
 }
 
-void write(string content, string path)
+template <typename T>
+const char* read(string path) 
 {
-	ofstream out;
-	out.open(path);
-	ifstream inFile(path);
-	if (!inFile)
+	char* input = new char[sizeof(T) * 8 + 1];
+	ifstream in;
+	in.open(path, ios::in);
+	if (!in)
 	{
-		cout << "Invalid opening file!\n";
-		cout << "Directory: " + path;
+		cout << "Invalid opening file!" << '\n';
+		return "ERROR READING FILE";
 	}
-	else
-		out << content;
-	out.close();
-	cout << "Your data has been successfully written to " + path;
-}
-
-string read() 
-{
-	return "";
+	else in.getline(input, sizeof(T) * 8 + 1);
+	in.close();
+	return input;
 }
 
 template<class T>
-T get(std::istream& is) 
+T get(istream& is) //для ввода пользователя без его сохранения (мгновенное использование)
 {
 	T result;
 	is >> result;
@@ -67,6 +68,14 @@ int main()
 {
 	int input = 0, n = 0, sn = 0, cn = 0;
 	string dump = "", path = "text.txt";
+
+	cout << "Would you like to change file path (standard path refers to the folder with this program)? (Y/N): ";
+	if (get<char>(cin) == 'Y')
+	{
+		cout << "New path (ending with filename.txt): ";
+		cin >> path;
+	}
+	else cout << "PATH set to standard.\n";
 	do
 	{
 		cout << "0 for int\n1 for short int\n2 for char\nType: ";
@@ -86,15 +95,18 @@ int main()
 		{
 		case 0: //int
 			cin >> n;
-			dump = Dump<int>(n);
+			Dump<int>(n, path);
+			cout << read<int>(path);
 			break;
 		case 1: //short int
 			cin >> sn;
-			dump = Dump<short int>(sn);
+			Dump<short int>(sn, path);
+			cout << read<short int>(path);
 			break;
 		case 2: //char
 			cin >> cn;
-			dump = Dump<char>(cn);
+			Dump<char>(cn, path);
+			cout << read<char>(path);
 			break;
 		default:
 			cout << "Wrong input." << endl;
@@ -108,13 +120,5 @@ int main()
 			while (cin.get() != '\n');
 		}
 	} while (true);
-	cout << "Would you like to change file path? (Y/N): ";
-	if (get<string>(cin) == "Y")
-	{
-		cout << "New path (ending with filename.txt): ";
-		cin >> path;
-	}
-	else if (get<string>(cin) != "N") cout << "Wrong answer. PATH set to standard.";
-	write(dump, path);
 	return EXIT_SUCCESS;
 }
