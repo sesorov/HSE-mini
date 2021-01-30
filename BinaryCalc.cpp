@@ -259,6 +259,16 @@ void get_params(string* params)
                 else
                     cout << "Incorrect action: use only +/-/*\n";
             }
+            try
+            {
+                int left = stoi(params[0]);
+                int right = stoi(params[2]);
+            }
+            catch (invalid_argument ex)
+            {
+                cout << "Incorrect input: wrong number.";
+                is_correct = false;
+            }
         }
     }
 }
